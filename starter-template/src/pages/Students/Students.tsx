@@ -1,19 +1,28 @@
+import { useQuery } from '@tanstack/react-query'
 import { getStudents } from 'api/students.api'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Students as StudentsType } from 'types/students.type'
-
+import {useSearchParams} from "react-router-dom"
+import { useQueryString } from 'utils/useQueryString'
 export default function Students() {
-  const [students, setStudents] = React.useState<StudentsType>([])
-  const [isLoading, setIsLoading] = React.useState<Boolean>(false)
-  React.useEffect(() => {
-    setIsLoading(true);
-    getStudents(1, 10).then((res: any) => {
-      setStudents(res.data)
-    }).finally(() => {
-      setIsLoading(false)
-    })
-  }, [])
+  const queryString: {page?: Number, limit?: Number} = useQueryString();
+  const page = Number(queryString.page) || 1;
+  const limit = Number(queryString.limit) || 1;
+  const {data, isLoading } = useQuery({
+    queryKey: ["student", page, limit],
+    queryFn: () => getStudents(page, limit)
+  })
+
+  // const [students, setStudents] = React.useState<StudentsType>([])
+  // const [isLoading, setIsLoading] = React.useState<Boolean>(false)
+  // React.useEffect(() => {
+  //   setIsLoading(true);
+  //   getStudents(1, 10).then((res: any) => {
+  //     setStudents(res.data)
+  //   }).finally(() => {
+  //     setIsLoading(false)
+  //   })
+  // }, [])
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
@@ -57,8 +66,8 @@ export default function Students() {
                 </tr>
               </thead>
               <tbody>
-                {students.map((student) => <tr key={student.id} className='bg-white border-b hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'>
-                  <td className='px-6 py-4'>1</td>
+                {data?.data.map((student) => <tr key={student.id} className='bg-white border-b hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'>
+                  <td className='px-6 py-4'>{student.id}</td>
                   <td className='px-6 py-4'>
                     <img
                       src={student.avatar}
