@@ -2,31 +2,23 @@ import { useQuery } from '@tanstack/react-query'
 import { getStudents } from 'api/students.api'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import {useSearchParams} from "react-router-dom"
 import { useQueryString } from 'utils/useQueryString'
+import classNames from "classnames"
+const LIMIT = 10;
 export default function Students() {
-  const queryString: {page?: Number, limit?: Number} = useQueryString();
+  const queryString: { page?: Number } = useQueryString();
   const page = Number(queryString.page) || 1;
-  const limit = Number(queryString.limit) || 1;
-  const {data, isLoading } = useQuery({
-    queryKey: ["student", page, limit],
-    queryFn: () => getStudents(page, limit)
-  })
 
-  // const [students, setStudents] = React.useState<StudentsType>([])
-  // const [isLoading, setIsLoading] = React.useState<Boolean>(false)
-  // React.useEffect(() => {
-  //   setIsLoading(true);
-  //   getStudents(1, 10).then((res: any) => {
-  //     setStudents(res.data)
-  //   }).finally(() => {
-  //     setIsLoading(false)
-  //   })
-  // }, [])
+  const studentsQuery = useQuery({
+    queryKey: ["student", page, LIMIT],
+    queryFn: () => getStudents(page, LIMIT)
+  })
+  const totalStudentsCount = Number(studentsQuery.data?.headers['x-total-count'] || 0)
+  const totalPage = Math.ceil(totalStudentsCount / LIMIT)
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
-      {isLoading && (<div role='status' className='mt-6 animate-pulse'>
+      {studentsQuery.isLoading && (<div role='status' className='mt-6 animate-pulse'>
         <div className='h-4 mb-4 bg-gray-200 rounded dark:bg-gray-700' />
         <div className='mb-2.5 h-10  rounded bg-gray-200 dark:bg-gray-700' />
         <div className='mb-2.5 h-10 rounded bg-gray-200 dark:bg-gray-700' />
@@ -42,7 +34,7 @@ export default function Students() {
         <div className='h-10 bg-gray-200 rounded dark:bg-gray-700' />
         <span className='sr-only'>Loading...</span>
       </div>)}
-      {!isLoading &&
+      {!studentsQuery.isLoading &&
         <React.Fragment>
           <div className='relative mt-6 overflow-x-auto shadow-md sm:rounded-lg'>
             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
@@ -66,7 +58,7 @@ export default function Students() {
                 </tr>
               </thead>
               <tbody>
-                {data?.data.map((student) => <tr key={student.id} className='bg-white border-b hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'>
+                {studentsQuery.data?.data.map((student) => <tr key={student.id} className='bg-white border-b hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'>
                   <td className='px-6 py-4'>{student.id}</td>
                   <td className='px-6 py-4'>
                     <img
@@ -98,14 +90,35 @@ export default function Students() {
                     Previous
                   </span>
                 </li>
-                <li>
+                {Array(totalPage).fill(0).map((_, index) => {
+                  const pageNumber = index + 1;
+                  const isActive = pageNumber === page;
+                  return (
+                    <li>
+                      <Link
+                        className={classNames('px-3 py-2 leading-tight border border-gray-300 hover:bg-gray-100 hover:text-gray-700', 
+                        {
+                          'bg-gray-100 text-gray-700': isActive,
+                          'bg-white text-gray-500': !isActive
+                        }
+
+                        )}
+                        to={`/students?page=${pageNumber}`}
+                      >
+                        {pageNumber}
+                      </Link>
+                    </li>
+                  )
+                }
+                )}
+                {/* <li>
                   <a
                     className='px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'
                     href='/students?page=8'
                   >
                     1
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a
                     className='px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
