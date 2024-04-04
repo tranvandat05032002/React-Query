@@ -11,8 +11,12 @@ export default function Students() {
 
   const studentsQuery = useQuery({
     queryKey: ["student", page, LIMIT],
-    queryFn: () => getStudents(page, LIMIT)
+    queryFn: () => getStudents(page, LIMIT),
+    staleTime: 60 * 1000, //60s
+    gcTime: 61 * 1000
   })
+  const {isLoading, isFetching} = studentsQuery
+  console.log("isLoading: ", isLoading, " isFetching: ", isFetching)
   const totalStudentsCount = Number(studentsQuery.data?.headers['x-total-count'] || 0)
   const totalPage = Math.ceil(totalStudentsCount / LIMIT)
   return (
@@ -94,7 +98,7 @@ export default function Students() {
                   const pageNumber = index + 1;
                   const isActive = pageNumber === page;
                   return (
-                    <li>
+                    <li key={pageNumber}>
                       <Link
                         className={classNames('px-3 py-2 leading-tight border border-gray-300 hover:bg-gray-100 hover:text-gray-700', 
                         {
