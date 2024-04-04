@@ -1,9 +1,12 @@
+import {useMatch} from "react-router-dom"
 export default function AddStudent() {
+  const addMatch = useMatch('/students/add');
+  const isAdd = Boolean(addMatch)
   return (
     <div>
-      <h1 className='text-lg'>Add/Edit Student</h1>
+      <h1 className='text-lg'>{isAdd ? "Add" : "Edit"} Student</h1>
       <form className='mt-6'>
-        <div className='group relative z-0 mb-6 w-full'>
+        <div className='relative z-0 w-full mb-6 group'>
           <input
             type='email'
             name='floating_email'
@@ -20,27 +23,27 @@ export default function AddStudent() {
           </label>
         </div>
 
-        <div className='group relative z-0 mb-6 w-full'>
+        <div className='relative z-0 w-full mb-6 group'>
           <div>
             <div>
-              <div className='mb-4 flex items-center'>
+              <div className='flex items-center mb-4'>
                 <input
                   id='gender-1'
                   type='radio'
                   name='gender'
-                  className='h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
+                  className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
                 />
                 <label htmlFor='gender-1' className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
                   Male
                 </label>
               </div>
-              <div className='mb-4 flex items-center'>
+              <div className='flex items-center mb-4'>
                 <input
                   defaultChecked
                   id='gender-2'
                   type='radio'
                   name='gender'
-                  className='h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
+                  className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
                 />
                 <label htmlFor='gender-2' className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
                   Female
@@ -52,7 +55,7 @@ export default function AddStudent() {
                   id='gender-3'
                   type='radio'
                   name='gender'
-                  className='h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
+                  className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
                 />
                 <label htmlFor='gender-3' className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
                   Other
@@ -61,7 +64,7 @@ export default function AddStudent() {
             </div>
           </div>
         </div>
-        <div className='group relative z-0 mb-6 w-full'>
+        <div className='relative z-0 w-full mb-6 group'>
           <input
             type='text'
             name='country'
@@ -78,7 +81,7 @@ export default function AddStudent() {
           </label>
         </div>
         <div className='grid md:grid-cols-2 md:gap-6'>
-          <div className='group relative z-0 mb-6 w-full'>
+          <div className='relative z-0 w-full mb-6 group'>
             <input
               type='tel'
               pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}'
@@ -95,7 +98,7 @@ export default function AddStudent() {
               First Name
             </label>
           </div>
-          <div className='group relative z-0 mb-6 w-full'>
+          <div className='relative z-0 w-full mb-6 group'>
             <input
               type='text'
               name='last_name'
@@ -113,7 +116,7 @@ export default function AddStudent() {
           </div>
         </div>
         <div className='grid md:grid-cols-2 md:gap-6'>
-          <div className='group relative z-0 mb-6 w-full'>
+          <div className='relative z-0 w-full mb-6 group'>
             <input
               type='text'
               name='avatar'
@@ -129,7 +132,7 @@ export default function AddStudent() {
               Avatar Base64
             </label>
           </div>
-          <div className='group relative z-0 mb-6 w-full'>
+          <div className='relative z-0 w-full mb-6 group'>
             <input
               type='text'
               name='btc_address'

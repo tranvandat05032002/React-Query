@@ -8,7 +8,6 @@ const LIMIT = 10;
 export default function Students() {
   const queryString: { page?: Number } = useQueryString();
   const page = Number(queryString.page) || 1;
-
   const studentsQuery = useQuery({
     queryKey: ["student", page, LIMIT],
     queryFn: () => getStudents(page, LIMIT),
@@ -16,13 +15,16 @@ export default function Students() {
     gcTime: 61 * 1000,
     placeholderData: keepPreviousData
   })
-  const {isLoading, isFetching} = studentsQuery
+  const { isLoading, isFetching } = studentsQuery
   console.log("isLoading: ", isLoading, " isFetching: ", isFetching)
   const totalStudentsCount = Number(studentsQuery.data?.headers['x-total-count'] || 0)
   const totalPage = Math.ceil(totalStudentsCount / LIMIT)
   return (
     <div>
       <h1 className='text-lg'>Students</h1>
+      <div className="mt-4">
+        <Link to={'/students/add'} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add</Link>
+      </div>
       {studentsQuery.isLoading && (<div role='status' className='mt-6 animate-pulse'>
         <div className='h-4 mb-4 bg-gray-200 rounded dark:bg-gray-700' />
         <div className='mb-2.5 h-10  rounded bg-gray-200 dark:bg-gray-700' />
@@ -101,11 +103,11 @@ export default function Students() {
                   return (
                     <li key={pageNumber}>
                       <Link
-                        className={classNames('px-3 py-2 leading-tight border border-gray-300 hover:bg-gray-100 hover:text-gray-700', 
-                        {
-                          'bg-gray-100 text-gray-700': isActive,
-                          'bg-white text-gray-500': !isActive
-                        }
+                        className={classNames('px-3 py-2 leading-tight border border-gray-300 hover:bg-gray-100 hover:text-gray-700',
+                          {
+                            'bg-gray-100 text-gray-700': isActive,
+                            'bg-white text-gray-500': !isActive
+                          }
 
                         )}
                         to={`/students?page=${pageNumber}`}
