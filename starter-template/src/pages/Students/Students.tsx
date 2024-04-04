@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getStudents } from 'api/students.api'
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -13,7 +13,8 @@ export default function Students() {
     queryKey: ["student", page, LIMIT],
     queryFn: () => getStudents(page, LIMIT),
     staleTime: 60 * 1000, //60s
-    gcTime: 61 * 1000
+    gcTime: 61 * 1000,
+    placeholderData: keepPreviousData
   })
   const {isLoading, isFetching} = studentsQuery
   console.log("isLoading: ", isLoading, " isFetching: ", isFetching)
