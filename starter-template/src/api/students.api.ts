@@ -1,4 +1,4 @@
-import { Students } from "types/students.type";
+import { Student, Students } from "types/students.type";
 import http from "utils/http";
 
 export const getStudents = (page: Number | string, limit: Number | String) => 
@@ -8,3 +8,5 @@ export const getStudents = (page: Number | string, limit: Number | String) =>
       _limit: limit
     }
   })
+
+  export const addStudent = (student: Omit<Student, 'id'>) => http.post<Student>('/students', student)
