@@ -3,6 +3,7 @@ import { addStudent } from "api/students.api";
 import React from "react";
 import {useMatch} from "react-router-dom"
 import { Student } from "types/students.type";
+import { isAxiosError } from "utils/useQueryString";
 type FormStateType = Omit<Student, 'id'>
 const initialFormState: FormStateType = {
   avatar: '',
@@ -13,6 +14,9 @@ const initialFormState: FormStateType = {
   gender: '',
   last_name: ''
 }
+type FormError = | {
+  [key in keyof FormStateType]: string;
+} | null;
 const gender = {
   male: 'Male',
   female: 'Female',
@@ -22,17 +26,24 @@ export default function AddStudent() {
   const addMatch = useMatch('/students/add');
   const [formState, setFormState] = React.useState<FormStateType>(initialFormState)
   const isAdd = Boolean(addMatch)
-  const addStudentsMutation = useMutation({
+  const {mutate, data, error} = useMutation({
     mutationFn: (body: FormStateType) => {
       return addStudent(body)
     }
   })
+  console.log("data: ", data, "error: ", error)
+  const errorForm: FormError = React.useMemo(() => {
+    if (isAxiosError<{ error: FormError }>(error) && error.response?.status === 422) {
+      return error.response?.data.error
+    }
+    return null
+  }, [error])
   const handleChange = (name: keyof FormStateType) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormState((prev) => ({...prev, [name]: event.target.value}))
   }
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    addStudentsMutation.mutate(formState);
+    mutate(formState);
   }
   return (
     <div>
@@ -55,6 +66,12 @@ export default function AddStudent() {
           >
             Email address
           </label>
+          {errorForm && (
+            <p className='mt-2 text-sm text-red-600'>
+              <span className='font-medium'>Lỗi! </span>
+              {errorForm.email}
+            </p>
+          )}
         </div>
 
         <div className='relative z-0 w-full mb-6 group'>
