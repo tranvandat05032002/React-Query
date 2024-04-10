@@ -16,7 +16,6 @@ export default function Students() {
     placeholderData: keepPreviousData
   })
   const { isLoading, isFetching } = studentsQuery
-  console.log("isLoading: ", isLoading, " isFetching: ", isFetching)
   const totalStudentsCount = Number(studentsQuery.data?.headers['x-total-count'] || 0)
   const totalPage = Math.ceil(totalStudentsCount / LIMIT)
   return (
@@ -79,7 +78,7 @@ export default function Students() {
                   </th>
                   <td className='px-6 py-4'>{student.email}</td>
                   <td className='px-6 py-4 text-right'>
-                    <Link to='/students/1' className='mr-5 font-medium text-blue-600 hover:underline dark:text-blue-500'>
+                    <Link to={`/students/${student.id}`} className='mr-5 font-medium text-blue-600 hover:underline dark:text-blue-500'>
                       Edit
                     </Link>
                     <button className='font-medium text-red-600 dark:text-red-500'>Delete</button>
