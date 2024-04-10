@@ -14,7 +14,7 @@ const initialFormState: FormStateType = {
   gender: '',
   last_name: ''
 }
-type FormError = | {
+type FormError = {
   [key in keyof FormStateType]: string;
 } | null;
 const gender = {
@@ -45,7 +45,12 @@ export default function AddStudent() {
   }
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutate(formState);
+    mutate(formState, {
+      onSuccess: () => {
+        setFormState(initialFormState)
+      }
+    }
+    );
   }
   return (
     <div>
