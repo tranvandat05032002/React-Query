@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { deleteStudent, getStudents } from 'api/students.api'
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -8,8 +8,9 @@ const LIMIT = 10;
 export default function Students() {
   const queryString: { page?: Number } = useQueryString();
   const page = Number(queryString.page) || 1;
+  const queryClient = useQueryClient();
   const studentsQuery = useQuery({
-    queryKey: ["student", page, LIMIT],
+    queryKey: ["student", page],
     queryFn: () => getStudents(page, LIMIT),
     staleTime: 60 * 1000, //60s
     gcTime: 61 * 1000,
@@ -19,6 +20,10 @@ export default function Students() {
     mutationFn: (id: number) => deleteStudent(id),
     onSuccess: (_, id) => {
       alert(`Delete student id ${id} success!`)
+      queryClient.invalidateQueries({
+        queryKey: ["student", page],
+        exact: true
+      })
     }
   })
   const handleDeleteStudent = (id: number) => {
