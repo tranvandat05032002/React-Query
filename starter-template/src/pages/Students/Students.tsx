@@ -1,5 +1,5 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { getStudents } from 'api/students.api'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
+import { deleteStudent, getStudents } from 'api/students.api'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useQueryString } from 'utils/useQueryString'
@@ -15,7 +15,15 @@ export default function Students() {
     gcTime: 61 * 1000,
     placeholderData: keepPreviousData
   })
-  const { isLoading, isFetching } = studentsQuery
+  const deleteStudentMutation = useMutation({
+    mutationFn: (id: number) => deleteStudent(id),
+    onSuccess: (_, id) => {
+      alert(`Delete student id ${id} success!`)
+    }
+  })
+  const handleDeleteStudent = (id: number) => {
+    deleteStudentMutation.mutate(id)
+  }
   const totalStudentsCount = Number(studentsQuery.data?.headers['x-total-count'] || 0)
   const totalPage = Math.ceil(totalStudentsCount / LIMIT)
   return (
@@ -81,7 +89,7 @@ export default function Students() {
                     <Link to={`/students/${student.id}`} className='mr-5 font-medium text-blue-600 hover:underline dark:text-blue-500'>
                       Edit
                     </Link>
-                    <button className='font-medium text-red-600 dark:text-red-500'>Delete</button>
+                    <button className='font-medium text-red-600 dark:text-red-500' onClick={() => handleDeleteStudent(student.id)}>Delete</button>
                   </td>
                 </tr>)}
               </tbody>
