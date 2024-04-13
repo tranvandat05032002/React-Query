@@ -27,15 +27,22 @@ export default function Students() {
     }
   })
   const handlePrefetchDataStudent = (id: Number) => {
-     queryClient.prefetchQuery({
-      queryKey: ["student", String(id)],
-      queryFn: () => getStudent(id),
-      staleTime: 10 * 1000, // 10s
-      gcTime: 11 * 1000 // 11s remove in cache 
-    })
+    //  queryClient.prefetchQuery({
+    //   queryKey: ["student", String(id)],
+    //   queryFn: () => getStudent(id),
+    //   staleTime: 10 * 1000, // 10s
+    //   gcTime: 11 * 1000 // 11s remove in cache 
+    // })
   }
   const handleDeleteStudent = (id: number) => {
     deleteStudentMutation.mutate(id)
+  }
+  const hanldeFetchStudentId = (second: number) => {
+    queryClient.prefetchQuery({
+      queryKey: ["student", "11"],
+      queryFn: () => getStudent(11),
+      staleTime: second * 1000, // 10s
+    })
   }
   const totalStudentsCount = Number(studentsQuery.data?.headers['x-total-count'] || 0)
   const totalPage = Math.ceil(totalStudentsCount / LIMIT)
@@ -45,6 +52,8 @@ export default function Students() {
       <div className="mt-4">
         <Link to={'/students/add'} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add</Link>
       </div>
+      <div className="mt-2"><button className="text-white bg-blue-500 px-5 py-2.5 rounded-lg" onClick={() => hanldeFetchStudentId(10)}>10S</button></div>
+      <div className="mt-2"><button className="text-white bg-blue-500 px-5 py-2.5 rounded-lg" onClick={() => hanldeFetchStudentId(2)}>2S</button></div>
       {studentsQuery.isLoading && (<div role='status' className='mt-6 animate-pulse'>
         <div className='h-4 mb-4 bg-gray-200 rounded dark:bg-gray-700' />
         <div className='mb-2.5 h-10  rounded bg-gray-200 dark:bg-gray-700' />

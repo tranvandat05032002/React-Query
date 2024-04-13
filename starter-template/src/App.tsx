@@ -1,3 +1,4 @@
+import Snipper from 'component/Snipper'
 import MainLayout from 'layouts/MainLayout'
 import About from 'pages/About'
 import AddStudent from 'pages/AddStudent'
@@ -5,6 +6,7 @@ import Dashboard from 'pages/Dashboard'
 import NotFound from 'pages/NotFound'
 import Students from 'pages/Students'
 import { useRoutes } from 'react-router-dom'
+import {useIsFetching, useIsMutating} from "@tanstack/react-query"
 
 function App() {
   const elements = useRoutes([
@@ -33,9 +35,12 @@ function App() {
       element: <NotFound />
     }
   ])
-
+  const isFetching = useIsFetching()
+  const isMutating = useIsMutating()
+  const totalProgress = isFetching + isMutating;
   return (
     <div className='App'>
+      {totalProgress !== 0 && <Snipper progress={totalProgress}/>}
       <MainLayout>{elements}</MainLayout>
     </div>
   )
