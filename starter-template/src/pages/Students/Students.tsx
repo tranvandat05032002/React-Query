@@ -11,7 +11,7 @@ export default function Students() {
   const queryClient = useQueryClient();
   const studentsQuery = useQuery({
     queryKey: ["student", page],
-    queryFn: () => getStudents(page, LIMIT),
+    queryFn: ({ signal }) => getStudents(page, LIMIT, signal),
     staleTime: 60 * 1000, //60s
     gcTime: 61 * 1000,
     placeholderData: keepPreviousData
@@ -37,11 +37,19 @@ export default function Students() {
   const handleDeleteStudent = (id: number) => {
     deleteStudentMutation.mutate(id)
   }
-  const hanldeFetchStudentId = (second: number) => {
+  const handleFetchStudentId = (second: number) => {
     queryClient.prefetchQuery({
       queryKey: ["student", "11"],
       queryFn: () => getStudent(11),
       staleTime: second * 1000, // 10s
+    })
+  }
+  const handleRefreshStudent = () => {
+    studentsQuery.refetch();
+  }
+  const handleCancelStudent = () => {
+    queryClient.cancelQueries({
+      queryKey: ['student', page]
     })
   }
   const totalStudentsCount = Number(studentsQuery.data?.headers['x-total-count'] || 0)
@@ -52,8 +60,10 @@ export default function Students() {
       <div className="mt-4">
         <Link to={'/students/add'} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add</Link>
       </div>
-      <div className="mt-2"><button className="text-white bg-blue-500 px-5 py-2.5 rounded-lg" onClick={() => hanldeFetchStudentId(10)}>10S</button></div>
-      <div className="mt-2"><button className="text-white bg-blue-500 px-5 py-2.5 rounded-lg" onClick={() => hanldeFetchStudentId(2)}>2S</button></div>
+      <div className="mt-2"><button className="text-white bg-blue-500 px-5 py-2.5 rounded-lg" onClick={() => handleFetchStudentId(10)}>10S</button></div>
+      <div className="mt-2"><button className="text-white bg-blue-500 px-5 py-2.5 rounded-lg" onClick={() => handleFetchStudentId(2)}>2S</button></div>
+      <div className="mt-2"><button className="text-white bg-blue-500 px-5 py-2.5 rounded-lg" onClick={handleRefreshStudent}>Refresh Student</button></div>
+      <div className="mt-2"><button className="text-white bg-pink-300 px-5 py-2.5 rounded-lg" onClick={handleCancelStudent}>cancel Request Student</button></div>
       {studentsQuery.isLoading && (<div role='status' className='mt-6 animate-pulse'>
         <div className='h-4 mb-4 bg-gray-200 rounded dark:bg-gray-700' />
         <div className='mb-2.5 h-10  rounded bg-gray-200 dark:bg-gray-700' />
@@ -94,30 +104,30 @@ export default function Students() {
                 </tr>
               </thead>
               <tbody>
-                {studentsQuery.data?.data.map((student) => 
-                <tr 
-                key={student.id} 
-                onMouseEnter={() => handlePrefetchDataStudent(student.id)} 
-                className='bg-white border-b hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'>
-                  <td className='px-6 py-4'>{student.id}</td>
-                  <td className='px-6 py-4'>
-                    <img
-                      src={student.avatar}
-                      alt='student'
-                      className='w-5 h-5'
-                    />
-                  </td>
-                  <th scope='row' className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                    {student.last_name}
-                  </th>
-                  <td className='px-6 py-4'>{student.email}</td>
-                  <td className='px-6 py-4 text-right'>
-                    <Link to={`/students/${student.id}`} className='mr-5 font-medium text-blue-600 hover:underline dark:text-blue-500'>
-                      Edit
-                    </Link>
-                    <button className='font-medium text-red-600 dark:text-red-500' onClick={() => handleDeleteStudent(student.id)}>Delete</button>
-                  </td>
-                </tr>)}
+                {studentsQuery.data?.data.map((student) =>
+                  <tr
+                    key={student.id}
+                    onMouseEnter={() => handlePrefetchDataStudent(student.id)}
+                    className='bg-white border-b hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600'>
+                    <td className='px-6 py-4'>{student.id}</td>
+                    <td className='px-6 py-4'>
+                      <img
+                        src={student.avatar}
+                        alt='student'
+                        className='w-5 h-5'
+                      />
+                    </td>
+                    <th scope='row' className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
+                      {student.last_name}
+                    </th>
+                    <td className='px-6 py-4'>{student.email}</td>
+                    <td className='px-6 py-4 text-right'>
+                      <Link to={`/students/${student.id}`} className='mr-5 font-medium text-blue-600 hover:underline dark:text-blue-500'>
+                        Edit
+                      </Link>
+                      <button className='font-medium text-red-600 dark:text-red-500' onClick={() => handleDeleteStudent(student.id)}>Delete</button>
+                    </td>
+                  </tr>)}
               </tbody>
             </table>
           </div>
