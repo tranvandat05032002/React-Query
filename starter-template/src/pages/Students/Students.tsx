@@ -11,7 +11,13 @@ export default function Students() {
   const queryClient = useQueryClient();
   const studentsQuery = useQuery({
     queryKey: ["student", page],
-    queryFn: ({ signal }) => getStudents(page, LIMIT, signal),
+    queryFn: () => {
+      const controller = new AbortController()
+      setTimeout(() => {
+        controller.abort();
+      }, 5000);
+      return getStudents(page, LIMIT, controller.signal)
+    },
     staleTime: 60 * 1000, //60s
     gcTime: 61 * 1000,
     placeholderData: keepPreviousData
