@@ -20,7 +20,8 @@ export default function Students() {
     },
     staleTime: 60 * 1000, //60s
     gcTime: 61 * 1000,
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    retry: 0
   })
   const deleteStudentMutation = useMutation({
     mutationFn: (id: number) => deleteStudent(id),
